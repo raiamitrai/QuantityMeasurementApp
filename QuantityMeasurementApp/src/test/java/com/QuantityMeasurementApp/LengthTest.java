@@ -1,11 +1,7 @@
 package com.QuantityMeasurementApp;
 
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
-
-import com.QuantityMeasurementApp.feature.uc3genericquantityclassFordryPrinciple.Length;
-import com.QuantityMeasurementApp.feature.uc3genericquantityclassFordryPrinciple.Length.LengthUnit;
 
 public class LengthTest {
 	
@@ -59,5 +55,27 @@ public class LengthTest {
 	void testInequality_cmToFeet() {
 	    assertFalse(new Length(1, LengthUnit.CENTIMETERS)
 	            .equals(new Length(1, LengthUnit.FEET)));
+	}
+	
+	//testing unit to unit conversion
+	
+	@Test
+	void test_InchesToYards() {
+		assertEquals(1.0, Length.convert(36, LengthUnit.INCHES, LengthUnit.YARDS));
+	}
+	
+	@Test
+	void test_InchesToFeet() {
+		assertEquals(1.0, Length.convert(12, LengthUnit.INCHES, LengthUnit.FEET));
+	}
+	
+	@Test
+	void test_InchesToCentimeter() {
+		assertEquals(2.54, Length.convert(1, LengthUnit.INCHES, LengthUnit.CENTIMETERS),0.0001);
+	}
+	
+	@Test
+	void test_FeetToInches() {
+		assertEquals(12.0, Length.convert(1, LengthUnit.FEET, LengthUnit.INCHES));
 	}
 }
