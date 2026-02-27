@@ -58,7 +58,6 @@ public class LengthTest {
 	}
 	
 	//testing unit to unit conversion
-	
 	@Test
 	void test_InchesToYards() {
 		assertEquals(1.0, Length.convert(36, LengthUnit.INCHES, LengthUnit.YARDS));
@@ -77,5 +76,17 @@ public class LengthTest {
 	@Test
 	void test_FeetToInches() {
 		assertEquals(12.0, Length.convert(1, LengthUnit.FEET, LengthUnit.INCHES));
+	}
+	
+	@Test
+	void sum_Test() {
+		assertEquals(new Length(13.0/12, LengthUnit.FEET),Length.sum(new Length(1,LengthUnit.FEET), new Length(1, LengthUnit.INCHES)));
+	}
+	
+	@Test
+	void sum_ExceptionTest() {
+		assertThrows(IllegalArgumentException.class, ()->{
+			Length.sum(new Length(1,LengthUnit.FEET), null);
+		});
 	}
 }
