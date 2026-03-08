@@ -20,6 +20,18 @@ public class Length {
 		return new Length(sum, length1.unit);
 	}
 	
+	//adding two length and return result in target unit
+	public static Length sum(Length length1, Length length2, LengthUnit targetUnit) throws IllegalArgumentException{
+		if(length1==null || length2==null || targetUnit==null)
+			throw new IllegalArgumentException("null value not allowed");
+		
+		double l1=length1.value*length1.unit.getConversionFactor();
+		double l2=length2.value*length2.unit.getConversionFactor();
+		double sum = (l1+l2)/targetUnit.getConversionFactor();
+		return new Length(sum, targetUnit);
+	}
+	
+	//Data member of class Length (immutable)
 	private final double value;
 	private final LengthUnit unit;
 	
@@ -28,6 +40,7 @@ public class Length {
 		this.unit = unit;
 	}
 	
+	//conversion to baseUnit
 	private double toBaseUnit() {
         return value * unit.getConversionFactor();
     }
