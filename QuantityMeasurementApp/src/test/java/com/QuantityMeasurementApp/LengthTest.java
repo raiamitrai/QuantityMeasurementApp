@@ -89,4 +89,8 @@ public class LengthTest {
 			Length.sum(new Length(1,LengthUnit.FEET), null);
 		});
 	}
+	@Test
+	void sum_TestWithTargetUnit() {
+		assertEquals(new Length(13.0/36, LengthUnit.YARDS),Length.sum(new Length(1,LengthUnit.FEET), new Length(1, LengthUnit.INCHES), LengthUnit.YARDS));
+	}
 }
