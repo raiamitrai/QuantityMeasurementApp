@@ -1,0 +1,96 @@
+package com.QuantityMeasurementApp;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class LengthTest {
+	
+	@Test
+	void testEquality_FeetToFeet_SameValue() {
+		Length q1 = new Length(1.0, LengthUnit.FEET);
+		Length q2 = new Length(1.0, LengthUnit.FEET);
+        assertEquals(q1, q2);
+	}
+	
+	@Test
+    void testEquality_InchToInch_SameValue() {
+		Length q1 = new Length(1.0, LengthUnit.INCHES);
+		Length q2 = new Length(1.0, LengthUnit.INCHES);
+        assertEquals(q1, q2);
+    }
+	
+	@Test
+    void testEquality_FeetToInch_EquivalentValue() {
+		Length q1 = new Length(1.0, LengthUnit.FEET);
+		Length q2 = new Length(12.0, LengthUnit.INCHES);
+        assertEquals(q1, q2);
+    }
+	
+	@Test
+    void testEquality_InchToFeet_EquivalentValue() {
+		Length q1 = new Length(12.0, LengthUnit.INCHES);
+		Length q2 = new Length(1.0, LengthUnit.FEET);
+        assertEquals(q1, q2);
+    }
+	
+	@Test
+	void testEquality_YardToFeet() {
+	    assertTrue(new Length(1, LengthUnit.YARDS)
+	            .equals(new Length(3, LengthUnit.FEET)));
+	}
+
+	@Test
+	void testEquality_YardToInches() {
+	    assertTrue(new Length(1, LengthUnit.YARDS)
+	            .equals(new Length(36, LengthUnit.INCHES)));
+	}
+
+	@Test
+	void testEquality_cmToInches() {
+	    assertTrue(new Length(1, LengthUnit.CENTIMETERS)
+	            .equals(new Length(0.393701, LengthUnit.INCHES)));
+	}
+
+	@Test
+	void testInequality_cmToFeet() {
+	    assertFalse(new Length(1, LengthUnit.CENTIMETERS)
+	            .equals(new Length(1, LengthUnit.FEET)));
+	}
+	
+	//testing unit to unit conversion
+	@Test
+	void test_InchesToYards() {
+		assertEquals(1.0, Length.convert(36, LengthUnit.INCHES, LengthUnit.YARDS));
+	}
+	
+	@Test
+	void test_InchesToFeet() {
+		assertEquals(1.0, Length.convert(12, LengthUnit.INCHES, LengthUnit.FEET));
+	}
+	
+	@Test
+	void test_InchesToCentimeter() {
+		assertEquals(2.54, Length.convert(1, LengthUnit.INCHES, LengthUnit.CENTIMETERS),0.0001);
+	}
+	
+	@Test
+	void test_FeetToInches() {
+		assertEquals(12.0, Length.convert(1, LengthUnit.FEET, LengthUnit.INCHES));
+	}
+	
+	@Test
+	void sum_Test() {
+		assertEquals(new Length(13.0/12, LengthUnit.FEET),Length.sum(new Length(1,LengthUnit.FEET), new Length(1, LengthUnit.INCHES)));
+	}
+	
+	@Test
+	void sum_ExceptionTest() {
+		assertThrows(IllegalArgumentException.class, ()->{
+			Length.sum(new Length(1,LengthUnit.FEET), null);
+		});
+	}
+	@Test
+	void sum_TestWithTargetUnit() {
+		assertEquals(new Length(13.0/36, LengthUnit.YARDS),Length.sum(new Length(1,LengthUnit.FEET), new Length(1, LengthUnit.INCHES), LengthUnit.YARDS));
+	}
+}
