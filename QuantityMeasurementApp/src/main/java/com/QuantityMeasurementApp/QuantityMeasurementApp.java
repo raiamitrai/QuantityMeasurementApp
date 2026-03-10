@@ -2,6 +2,8 @@ package com.QuantityMeasurementApp;
 
 public class QuantityMeasurementApp {
 	public static void main(String[] args) {
-		System.out.println(Length.convert(1, LengthUnit.INCHES, LengthUnit.CENTIMETERS));
+		Weight pound = new Weight(2.2, WeightUnit.POUNDS);
+		Weight kilogram = new Weight(1.0, WeightUnit.KILOGRAMS);
+		System.out.println(pound.equals(kilogram));
 	}
 }
