@@ -15,12 +15,12 @@ public class Quantity<U extends IMeasureable> {
         this.unit = unit;
     }
 
-    public double getValue() { 
-        return value; 
+    public double getValue() {
+        return value;
     }
 
-    public U getUnit() { 
-        return unit; 
+    public U getUnit() {
+        return unit;
     }
 
     public double convertTo(U targetUnit) {
@@ -31,81 +31,58 @@ public class Quantity<U extends IMeasureable> {
         return targetUnit.convertFromBaseUnit(base);
     }
 
-    // ADD operations
+    //add operations
     public Quantity<U> add(Quantity<U> other) {
 
-        if (other == null)
-            throw new IllegalArgumentException("Arguments cannot be null");
+        validateArithmeticOperands(other, unit, true);
 
-        double thisBase = unit.convertToBaseUnit(value);
-        double otherBase = other.unit.convertToBaseUnit(other.value);
+        double resultBase = performBaseArithmetic(other, ArithmeticOperation.ADD);
 
-        double sumBase = thisBase + otherBase;
-
-        double result = unit.convertFromBaseUnit(sumBase);
+        double result = unit.convertFromBaseUnit(resultBase);
 
         return new Quantity<>(result, unit);
     }
 
     public Quantity<U> add(Quantity<U> other, U targetUnit) {
 
-        if (other == null || targetUnit == null)
-            throw new IllegalArgumentException("Arguments cannot be null");
+        validateArithmeticOperands(other, targetUnit, true);
 
-        double thisBase = unit.convertToBaseUnit(value);
-        double otherBase = other.unit.convertToBaseUnit(other.value);
+        double resultBase = performBaseArithmetic(other, ArithmeticOperation.ADD);
 
-        double sumBase = thisBase + otherBase;
-
-        double result = targetUnit.convertFromBaseUnit(sumBase);
+        double result = targetUnit.convertFromBaseUnit(resultBase);
 
         return new Quantity<>(result, targetUnit);
     }
-
-    // SUBTRACT operations
+    
+    //subtract operations
     public Quantity<U> subtract(Quantity<U> other) {
 
-        if (other == null)
-            throw new IllegalArgumentException("Arguments cannot be null");
+        validateArithmeticOperands(other, unit, true);
 
-        double thisBase = unit.convertToBaseUnit(value);
-        double otherBase = other.unit.convertToBaseUnit(other.value);
+        double resultBase = performBaseArithmetic(other, ArithmeticOperation.SUBTRACT);
 
-        double diffBase = thisBase - otherBase;
-
-        double result = unit.convertFromBaseUnit(diffBase);
+        double result = unit.convertFromBaseUnit(resultBase);
 
         return new Quantity<>(result, unit);
     }
 
     public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
 
-        if (other == null || targetUnit == null)
-            throw new IllegalArgumentException("Arguments cannot be null");
+        validateArithmeticOperands(other, targetUnit, true);
 
-        double thisBase = unit.convertToBaseUnit(value);
-        double otherBase = other.unit.convertToBaseUnit(other.value);
+        double resultBase = performBaseArithmetic(other, ArithmeticOperation.SUBTRACT);
 
-        double diffBase = thisBase - otherBase;
-
-        double result = targetUnit.convertFromBaseUnit(diffBase);
+        double result = targetUnit.convertFromBaseUnit(resultBase);
 
         return new Quantity<>(result, targetUnit);
     }
 
-    // DIVIDE operations
+    //divide operations
     public double divide(Quantity<U> other) {
 
-        if (other == null)
-            throw new IllegalArgumentException("Arguments cannot be null");
+        validateArithmeticOperands(other, null, false);
 
-        double thisBase = unit.convertToBaseUnit(value);
-        double otherBase = other.unit.convertToBaseUnit(other.value);
-
-        if (otherBase == 0)
-            throw new ArithmeticException("Cannot divide by zero");
-
-        return thisBase / otherBase;
+        return performBaseArithmetic(other, ArithmeticOperation.DIVIDE);
     }
 
     public Quantity<U> divide(double divisor, U targetUnit) {
@@ -125,6 +102,64 @@ public class Quantity<U extends IMeasureable> {
         return new Quantity<>(result, targetUnit);
     }
 
+//    function perform arithmetic operations
+    private double performBaseArithmetic(Quantity<U> other, ArithmeticOperation operation) {
+
+        double thisBase = unit.convertToBaseUnit(value);
+        double otherBase = other.unit.convertToBaseUnit(other.value);
+
+        return operation.compute(thisBase, otherBase);
+    }
+
+//    input validation
+    private void validateArithmeticOperands(Quantity<U> other, U targetUnit, boolean targetUnitRequired) {
+
+        if (other == null)
+            throw new IllegalArgumentException("Other quantity cannot be null");
+
+        if (this.unit == null || other.unit == null)
+            throw new IllegalArgumentException("Unit cannot be null");
+
+        if (!this.unit.getClass().equals(other.unit.getClass()))
+            throw new IllegalArgumentException("Cannot operate on different measurement categories");
+
+        if (!Double.isFinite(this.value) || !Double.isFinite(other.value))
+            throw new IllegalArgumentException("Values must be finite numbers");
+
+        if (targetUnitRequired && targetUnit == null)
+            throw new IllegalArgumentException("Target unit cannot be null");
+    }
+
+    //arithmetic operations enum
+    private enum ArithmeticOperation {
+
+        ADD {
+            @Override
+            public double compute(double thisBase, double otherBase) {
+                return thisBase + otherBase;
+            }
+        },
+
+        SUBTRACT {
+            @Override
+            public double compute(double thisBase, double otherBase) {
+                return thisBase - otherBase;
+            }
+        },
+
+        DIVIDE {
+            @Override
+            public double compute(double thisBase, double otherBase) {
+                if (otherBase == 0.0)
+                    throw new ArithmeticException("Cannot divide by zero");
+                return thisBase / otherBase;
+            }
+        };
+
+        public abstract double compute(double thisBase, double otherBase);
+    }
+
+
     @Override
     public int hashCode() {
         long rounded = Math.round(unit.convertToBaseUnit(value) * 1000);
@@ -134,7 +169,8 @@ public class Quantity<U extends IMeasureable> {
     @Override
     public boolean equals(Object obj) {
 
-        if (this == obj) return true;
+        if (this == obj)
+            return true;
 
         if (obj == null || getClass() != obj.getClass())
             return false;

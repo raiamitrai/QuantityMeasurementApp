@@ -99,4 +99,113 @@ public class QuantityMeasurementAppTest {
 
         assertNotEquals(length, weight);
     }
+
+    // ---------------- ADD TESTS ----------------
+
+    @Test
+    void testAdd_UC12_BehaviorPreserved() {
+
+        Quantity<LengthUnit> q1 = new Quantity<>(1, LengthUnit.FEET);
+        Quantity<LengthUnit> q2 = new Quantity<>(12, LengthUnit.INCHES);
+
+        Quantity<LengthUnit> result = q1.add(q2);
+
+        assertEquals(2.0, result.getValue(), 0.001);
+        assertEquals(LengthUnit.FEET, result.getUnit());
+    }
+
+    // ---------------- SUBTRACT TESTS ----------------
+
+    @Test
+    void testSubtract_UC12_BehaviorPreserved() {
+
+        Quantity<LengthUnit> q1 = new Quantity<>(10, LengthUnit.FEET);
+        Quantity<LengthUnit> q2 = new Quantity<>(6, LengthUnit.INCHES);
+
+        Quantity<LengthUnit> result = q1.subtract(q2);
+
+        assertEquals(9.5, result.getValue(), 0.001);
+        assertEquals(LengthUnit.FEET, result.getUnit());
+    }
+
+    // ---------------- DIVIDE TESTS ----------------
+
+    @Test
+    void testDivide_UC12_BehaviorPreserved() {
+
+        Quantity<LengthUnit> q1 = new Quantity<>(10, LengthUnit.FEET);
+        Quantity<LengthUnit> q2 = new Quantity<>(2, LengthUnit.FEET);
+
+        double result = q1.divide(q2);
+
+        assertEquals(5.0, result);
+    }
+
+    // ---------------- VALIDATION TESTS ----------------
+
+    @Test
+    void testValidation_NullOperand_ConsistentAcrossOperations() {
+
+        Quantity<LengthUnit> q = new Quantity<>(10, LengthUnit.FEET);
+
+        assertThrows(IllegalArgumentException.class, () -> q.add(null));
+        assertThrows(IllegalArgumentException.class, () -> q.subtract(null));
+        assertThrows(IllegalArgumentException.class, () -> q.divide(null));
+    }
+
+    @Test
+    void testValidation_CrossCategory_ConsistentAcrossOperations() {
+
+        Quantity<LengthUnit> length = new Quantity<>(10, LengthUnit.FEET);
+        Quantity<WeightUnit> weight = new Quantity<>(5, WeightUnit.KILOGRAMS);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> length.add((Quantity) weight));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> length.subtract((Quantity) weight));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> length.divide((Quantity) weight));
+    }
+
+    // ---------------- IMMUTABILITY TESTS ----------------
+
+    @Test
+    void testImmutability_AfterAdd_ViaCentralizedHelper() {
+
+        Quantity<LengthUnit> q1 = new Quantity<>(5, LengthUnit.FEET);
+        Quantity<LengthUnit> q2 = new Quantity<>(5, LengthUnit.FEET);
+
+        Quantity<LengthUnit> result = q1.add(q2);
+
+        assertEquals(5, q1.getValue());
+        assertEquals(10, result.getValue());
+    }
+
+    @Test
+    void testImmutability_AfterSubtract_ViaCentralizedHelper() {
+
+        Quantity<LengthUnit> q1 = new Quantity<>(10, LengthUnit.FEET);
+        Quantity<LengthUnit> q2 = new Quantity<>(5, LengthUnit.FEET);
+
+        Quantity<LengthUnit> result = q1.subtract(q2);
+
+        assertEquals(10, q1.getValue());
+        assertEquals(5, result.getValue());
+    }
+
+    // ---------------- TARGET UNIT TEST ----------------
+
+    @Test
+    void testExplicitTargetUnit_AddSubtract_Overrides() {
+
+        Quantity<LengthUnit> q1 = new Quantity<>(1, LengthUnit.FEET);
+        Quantity<LengthUnit> q2 = new Quantity<>(12, LengthUnit.INCHES);
+
+        Quantity<LengthUnit> result = q1.add(q2, LengthUnit.INCHES);
+
+        assertEquals(24, result.getValue(), 0.001);
+        assertEquals(LengthUnit.INCHES, result.getUnit());
+    }
 }
