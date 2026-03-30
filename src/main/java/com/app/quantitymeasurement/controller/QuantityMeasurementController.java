@@ -1,23 +1,31 @@
 package com.app.quantitymeasurement.controller;
 
-import com.app.quantitymeasurement.dto.QuantityDTO;
-import com.app.quantitymeasurement.service.IQuantityMeasurementService;
+import com.app.quantitymeasurement.model.QuantityMeasurementEntity;
+import com.app.quantitymeasurement.service.QuantityMeasurementService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@RestController
+@RequestMapping("/quantity")
 public class QuantityMeasurementController {
 
-    private IQuantityMeasurementService service;
+    @Autowired
+    private QuantityMeasurementService service;
 
-    public QuantityMeasurementController(IQuantityMeasurementService service){
-        this.service = service;
+    @PostMapping("/save")
+    public QuantityMeasurementEntity save(@RequestBody QuantityMeasurementEntity entity){
+        return service.save(entity);
     }
 
-    public void performConversion(QuantityDTO dto, String target){
-        QuantityDTO result = service.convert(dto, target);
-        System.out.println("Converted Value: " + result.getValue());
+    @GetMapping("/all")
+    public List<QuantityMeasurementEntity> getAll(){
+        return service.getAll();
     }
 
-    public void performAddition(QuantityDTO q1, QuantityDTO q2){
-        QuantityDTO result = service.add(q1, q2);
-        System.out.println("Addition Result: " + result.getValue());
+    @GetMapping("/count")
+    public long count(){
+        return service.count();
     }
 }
