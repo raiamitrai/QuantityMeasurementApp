@@ -1,16 +1,18 @@
 package com.app.quantitymeasurement.service;
 
-import com.app.quantitymeasurement.dto.QuantityDTO;
+import com.app.quantitymeasurement.dto.ConvertDTO;
+import com.app.quantitymeasurement.dto.QuantityInputDTO;
+import com.app.quantitymeasurement.model.QuantityMeasurementEntity;
+
+import java.util.List;
 
 public interface IQuantityMeasurementService {
 
-    QuantityDTO convert(QuantityDTO input, String targetUnit);
+    String compare(QuantityInputDTO input);
 
-    boolean compare(QuantityDTO q1, QuantityDTO q2);
+    double convertQuantity(ConvertDTO dto);
 
-    QuantityDTO add(QuantityDTO q1, QuantityDTO q2);
+     double addQuantity(QuantityInputDTO input);
 
-    QuantityDTO subtract(QuantityDTO q1, QuantityDTO q2);
-
-    double divide(QuantityDTO q1, QuantityDTO q2);
+    List<QuantityMeasurementEntity> getHistory();
 }

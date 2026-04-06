@@ -1,31 +1,38 @@
 package com.app.quantitymeasurement.controller;
 
+import com.app.quantitymeasurement.dto.ConvertDTO;
+import com.app.quantitymeasurement.dto.QuantityInputDTO;
 import com.app.quantitymeasurement.model.QuantityMeasurementEntity;
-import com.app.quantitymeasurement.service.QuantityMeasurementService;
+import com.app.quantitymeasurement.service.IQuantityMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/quantity")
+@RequestMapping("/api/v1/quantities")
 public class QuantityMeasurementController {
 
     @Autowired
-    private QuantityMeasurementService service;
+    private IQuantityMeasurementService service;
 
-    @PostMapping("/save")
-    public QuantityMeasurementEntity save(@RequestBody QuantityMeasurementEntity entity){
-        return service.save(entity);
+    @PostMapping("/compare")
+    public String compare(@RequestBody QuantityInputDTO input) {
+        System.out.println("🔥 API HIT 🔥");
+        return service.compare(input);
     }
 
-    @GetMapping("/all")
-    public List<QuantityMeasurementEntity> getAll(){
-        return service.getAll();
+    @PostMapping("/convert")
+    public double convert(@RequestBody ConvertDTO dto) {
+        return service.convertQuantity(dto);
+    }
+    @PostMapping("/add")
+    public double add(@RequestBody QuantityInputDTO input) {
+        return service.addQuantity(input);
     }
 
-    @GetMapping("/count")
-    public long count(){
-        return service.count();
+    @GetMapping("/history")
+    public List<QuantityMeasurementEntity> getHistory() {
+        return service.getHistory();
     }
 }

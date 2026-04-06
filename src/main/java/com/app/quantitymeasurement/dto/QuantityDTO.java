@@ -1,26 +1,17 @@
 package com.app.quantitymeasurement.dto;
 
+import jakarta.validation.constraints.*;
+import lombok.Data;
+
+@Data
 public class QuantityDTO {
 
-    private double value;
+    @NotNull
+    private Double value;
+
+    @NotBlank
     private String unit;
+
+    @NotBlank
     private String measurementType;
-
-    public QuantityDTO(double value, String unit, String measurementType) {
-        this.value = value;
-        this.unit = unit;
-        this.measurementType = measurementType;
-    }
-
-    public double getValue() {
-        return value;
-    }
-
-    public String getUnit() {
-        return unit;
-    }
-
-    public String getMeasurementType() {
-        return measurementType;
-    }
 }
